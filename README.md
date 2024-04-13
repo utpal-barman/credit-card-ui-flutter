@@ -42,7 +42,7 @@ flutter packages get
 
 
 ## Usage
-To use `CreditCardUi()` widget, import the package:
+To use the `CreditCardUi()` widget, import the package:
 
 ``` dart
 import 'package:u_credit_card/u_credit_card.dart';
@@ -241,6 +241,8 @@ CreditCardUi(
     cvvNumber: '123', // 👈 CVV number to be shown on the back of the card
 ),
 ```
+
+![flipping-demo](https://github.com/utpal-barman/u-credit-card-flutter/assets/16848599/2dcf106f-50d4-4089-b234-ff5529b3e946)
 
 
 ধন্যবাদ
