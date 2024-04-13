@@ -245,6 +245,7 @@ class CreditCardUi extends StatelessWidget {
     }
 
     final frontSide = Transform.scale(
+      key: const ValueKey('FrontSide'),
       scale: scale,
       child: SizedBox(
         width: 300,
@@ -341,6 +342,7 @@ class CreditCardUi extends StatelessWidget {
 
     if (enableFlipping ?? false) {
       final backSide = Transform.flip(
+        key: const ValueKey('BackSide'),
         flipX: true,
         child: Transform.scale(
           scale: scale,
