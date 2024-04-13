@@ -1,4 +1,3 @@
-# .github/workflows/publish.yml
 name: Publish to pub.dev
 
 on:
@@ -6,7 +5,7 @@ on:
     branches:
       - main
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+*' # tag pattern on pub.dev: 'v'
+      - "v[0-9]+.[0-9]+.[0-9]+*" # tag pattern on pub.dev: 'v'
 
 # Publish using custom workflow
 jobs:
@@ -15,13 +14,24 @@ jobs:
       id-token: write # This is required for authentication using OIDC
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Flutter
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-      - uses: dart-lang/setup-dart@v1
-      - name: Install dependencies
+          channel: stable
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
+
+      - name: 📦 Install Dependencies
         run: dart pub get
-      - name: Publish
+
+      - name: ✨ Check Formatting
+        run: dart format --line-length 80 --set-exit-if-changed lib test
+
+      - name: 🕵️ Analyze
+        run: flutter analyze lib test
+
+      - name: 📢 Publish
         run: dart pub publish --force
