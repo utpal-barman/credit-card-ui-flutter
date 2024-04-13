@@ -8,7 +8,7 @@
 [![License](https://img.shields.io/github/license/utpal-barman/u-credit-card-flutter?logo=open-source-initiative&logoColor=green)](https://github.com/utpal-barman/u-credit-card-flutter/blob/main/LICENSE)
 
 
-🔥 "uCreditCard" is a Flutter package that offers a customizable solution for showing the UI of credit cards within your app.
+🔥 "uCreditCard" is a Flutter package that offers a customizable solution for showing the UI of credit cards within your app. Elevate user engagement with captivating flip animations and enhance your app's visual appeal effortlessly!
 
 <p align="center">
 <img src="https://user-images.githubusercontent.com/16848599/233195178-b4fb8007-ba2e-48ed-8020-7a0854d5038c.png" width="700"/>
