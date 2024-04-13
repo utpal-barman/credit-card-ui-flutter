@@ -4,22 +4,41 @@ on:
   push:
     branches:
       - develop
-      
+      - main
+
   pull_request:
 
-# Publish using custom workflow
+# PR validation
 jobs:
-  dart_pub_publish:
+  semantic_pull_request:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/semantic_pull_request.yml@v1
+
+  spell-check:
+    uses: VeryGoodOpenSource/very_good_workflows/.github/workflows/spell_check.yml@v1
+    with:
+      includes: "**/*.md"
+      modified_files_only: false
+
+  pr_validation:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Install Flutter
+      - name: 📚 Git Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐦 Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable'
-      - uses: dart-lang/setup-dart@v1
-      - name: Install dependencies
-        run: dart pub get
-      - name: Run Dart Analyze
-        run: dart analyze
+          channel: stable
+          cache: true
+          cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
+      - name: 📦 Install Dependencies
+        run: |
+          flutter pub global activate very_good_cli
+          very_good packages get --recursive
+
+      - name: ✨ Check Formatting
+        run: dart format --line-length 80 --set-exit-if-changed lib test
+
+      - name: 🕵️ Analyze
+        run: flutter analyze lib test

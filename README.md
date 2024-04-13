@@ -29,7 +29,7 @@ Add `u_credit_card` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  u_credit_card: ^1.1.0
+  u_credit_card: ^1.2.0
 ```
 
 Install it:
@@ -64,6 +64,7 @@ CreditCardUi(
 This will create a credit card user interface with the cardholder's name, card number, and validity date. For more advanced usage, see the following parameters:
 
 ### Parameters
+
 | Name                        | Type                       | Description                                                                                                                                                                                                             |
 |-----------------------------|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `cardHolderFullName`        | `String`                   | The cardholder's full name. This is a required parameter.                                                                                                                                                               |
@@ -78,10 +79,19 @@ This will create a credit card user interface with the cardholder's name, card n
 | `creditCardType`                  | `CreditCardType`                 | Specify the type of the credit card payment network logo to display. You can set it to `CreditCardType.none` if you prefer not to specify a card type and not show on the card UI. This is optional.                              |
 | `cardProviderLogo`          | `Widget`                   | Provide a widget for the logo of the card provider. If this parameter is not set, the card will be displayed without a logo. This is optional.                                                                          |
 | `cardProviderLogoPosition`  | `CardProviderLogoPosition` | Set the position of the card provider logo on the card. The default value is `CardProviderLogoPosition.right`. You can set it to `CardProviderLogoPosition.left` or `CardProviderLogoPosition.right`. This is optional. |
-| `backgroundDecorationImage` | `DecorationImage`          | Set a background image for the card. This parameter supports both asset and network images. If this parameter is not set, the card will be displayed without a background image. This is optional. 
+| `backgroundDecorationImage` | `DecorationImage`          | Set a background image for the card. This parameter supports both asset and network images. If this parameter is not set, the card will be displayed without a background image. This is optional. |
 | `showValidThru`             | `bool`                     | Indicates whether to show the "Valid Thru" section on the card. If set to `false`, the "Valid Thru" section will be hidden. By default, this value is `true`.                                                               |
 | `showValidFrom`             | `bool`                     | Indicates whether to show the "Valid From" section on the card. If set to `false`, the "Valid From" section will be hidden. By default, this value is `true`.                                                               |
-                     
+| `currencySymbol`             | `String`                     | The symbol used to represent the currency. By default, it uses US Dollar sign ($).                                                               |
+| `balance`             | `bool`                     | The balance amount. By default, this value is 0.                                                               |
+| `showBalance`             | `bool`                     | A boolean flag indicating whether to show the balance. By default, this value is `false`.                                                               |
+| `enableFlipping`             | `bool`                     | A boolean flag indicating whether card flipping is enabled. By default, this value is `false`.                                                               |
+| `autoHideBalance`             | `bool`                     | A boolean flag indicating to enable the auto hiding balance feature. In this case, the placeholder will be shown insteade of the balance. By default it is `false`.
+| `cvvNumber`             | `bool`                     | CVV number of the card, use \*\*\* if you think this is sensitive, by default it will show \*\*\*.                                                               |
+| `disableHapticFeedBack`             | `bool`                     | A boolean flag to disable the haptic feedback. Example — card flipping or tapping on placeholder to see balance
+
+
+
 
 #### Example
 ``` dart
@@ -184,7 +194,53 @@ CreditCardUi(
 ),
 ```
 
+
+
 <img width="432" alt="Screenshot_2023-04-20_at_2 02 42_AM-removebg-preview" src="https://user-images.githubusercontent.com/16848599/233195568-5a197e2b-115c-46b1-876c-3428726f38cb.png">
+
+
+To display the balance of your card, simply set `showBalance: true` and provide the balance amount using `balance: 200.0` (any double value). Enabling `autoHideBalance: true` will generate a placeholder labeled "Tap to see balance". Users can then tap on this placeholder to reveal the balance.
+
+```dart
+CreditCardUi(
+    cardHolderFullName: 'John Doe',
+    cardNumber: '1234567812345678',
+    validFrom: '01/23',
+    validThru: '01/28',
+    topLeftColor: Colors.blue,
+    doesSupportNfc: true,
+    placeNfcIconAtTheEnd: true,
+    cardType: CardType.debit,
+    cardProviderLogo: FlutterLogo(),
+    cardProviderLogoPosition: CardProviderLogoPosition.right,
+    showBalance: true,
+    balance: 128.32434343,
+    autoHideBalance: true,
+),
+```
+
+#### Card Flipping Animation
+To enable the flipping animation by default, simply set the property `enableFlipping: true`. You can set CVV by `cvvNumber: 000`.
+
+```dart
+CreditCardUi(
+    cardHolderFullName: 'John Doe',
+    cardNumber: '1234567812345678',
+    validFrom: '01/23',
+    validThru: '01/28',
+    topLeftColor: Colors.blue,
+    doesSupportNfc: true,
+    placeNfcIconAtTheEnd: true,
+    cardType: CardType.debit,
+    cardProviderLogo: FlutterLogo(),
+    cardProviderLogoPosition: CardProviderLogoPosition.right,
+    showBalance: true,
+    balance: 128.32434343,
+    autoHideBalance: true,
+    enableFlipping: true, // 👈 Enables the flipping
+    cvvNumber: '123', // 👈 CVV number to be shown on the back of the card
+),
+```
 
 
 ধন্যবাদ

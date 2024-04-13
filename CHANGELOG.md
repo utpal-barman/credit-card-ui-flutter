@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] 🚀
+
+### Features
+
+- ✨ Added the ability to show balances and flipping animations on cards.
+- Introduced parameters: `showBalance`, `balance`, `cvvNumber`, `enableFlipping`, `autoHideBalance`, `disableHapticFeedback`, etc.
+
 ## [1.1.0] 🚀
 
 ### Features

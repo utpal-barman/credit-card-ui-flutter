@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:u_credit_card/src/constants/ui_constants.dart';
 import 'package:u_credit_card/src/ui/credit_card_chip_nfc_view.dart';
 import 'package:u_credit_card/src/ui/credit_card_holder_name_view.dart';
@@ -77,6 +80,13 @@ class CreditCardUi extends StatelessWidget {
     this.showValidFrom = true,
     this.showValidThru = true,
     super.key,
+    this.currencySymbol = r'$',
+    this.balance = 0.0,
+    this.showBalance = false,
+    this.autoHideBalance = false,
+    this.enableFlipping = false,
+    this.cvvNumber = '***',
+    this.disableHapticFeedBack = false,
   });
 
   /// Full Name of the Card Holder.
@@ -166,6 +176,32 @@ class CreditCardUi extends StatelessWidget {
   /// Set Background image, can support both asset and network image.
   final DecorationImage? backgroundDecorationImage;
 
+  /// The symbol used to represent the currency.
+  /// By default, it uses US Dollar sign ($)
+  final String? currencySymbol;
+
+  /// The balance amount.
+  final double? balance;
+
+  /// A boolean flag indicating whether to show the balance.
+  final bool? showBalance;
+
+  /// A boolean flag indicating whether card flipping is enabled.
+  final bool? enableFlipping;
+
+  /// A boolean flag indicating to enable the auto hiding balance feature.
+  ///
+  /// In this case, the placeholder will be shown insteade of the balance.
+  final bool? autoHideBalance;
+
+  /// CVV number of the card, use *** if you think this is sensitive,
+  /// by default it will show ***
+  final String? cvvNumber;
+
+  /// A boolean flag to disable the haptic feedback.
+  /// Example — card flipping or tapping on placeholder to see balance
+  final bool? disableHapticFeedBack;
+
   @override
   Widget build(BuildContext context) {
     final cardNumberMasked = CreditCardHelper.maskCreditCardNumber(
@@ -208,7 +244,7 @@ class CreditCardUi extends StatelessWidget {
       );
     }
 
-    return Transform.scale(
+    final frontSide = Transform.scale(
       scale: scale,
       child: SizedBox(
         width: 300,
@@ -236,6 +272,11 @@ class CreditCardUi extends StatelessWidget {
                     height: 32,
                     width: 268,
                     child: CreditCardTopLogo(
+                      enableFlipping: enableFlipping,
+                      currencySymbol: currencySymbol,
+                      autoHideBalance: autoHideBalance,
+                      balance: balance,
+                      showBalance: showBalance,
                       cardType: cardType,
                       cardProviderLogo: cardProviderLogo,
                       cardProviderLogoPosition: cardProviderLogoPosition,
@@ -294,6 +335,163 @@ class CreditCardUi extends StatelessWidget {
               ],
             ),
           ),
+        ),
+      ),
+    );
+
+    if (enableFlipping ?? false) {
+      final backSide = Transform.flip(
+        flipX: true,
+        child: Transform.scale(
+          scale: scale,
+          child: SizedBox(
+            width: 300,
+            child: AspectRatio(
+              aspectRatio: 1.5789,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      topLeftColor,
+                      conditionalBottomRightColor,
+                    ],
+                  ),
+                  image: backgroundDecorationImage,
+                ),
+                child: Stack(
+                  children: [
+                    Positioned(
+                      top: 24,
+                      child: Container(
+                        height: 50,
+                        width: 300,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Positioned(
+                      left: 0,
+                      top: 84,
+                      child: Container(
+                        height: 36,
+                        width: 200,
+                        color: const Color(0xFFB3B3B3),
+                        child: Center(
+                          child: SizedBox(
+                            width: 200,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Text(
+                                cvvNumber ?? '',
+                                textAlign: TextAlign.end,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Positioned(
+                      left: 8,
+                      bottom: 8,
+                      child: SizedBox(
+                        height: 20,
+                        width: 44,
+                        child: Container(
+                          key: const ValueKey('CardLogoWidget'),
+                          child: cardLogoWidget,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      return AnimatedFlippingCard(
+        frontSide: frontSide,
+        backSide: backSide,
+      );
+    }
+
+    return frontSide;
+  }
+}
+
+///
+
+class AnimatedFlippingCard extends StatefulWidget {
+  ///
+  const AnimatedFlippingCard({
+    required this.frontSide,
+    required this.backSide,
+    this.disableHapticFeedBack = false,
+    super.key,
+  });
+
+  /// Front side of the card
+  final Widget frontSide;
+
+  /// Back side of the cards
+  final Widget backSide;
+
+  /// A boolean to enable the haptic feedback on various actions,
+  /// flipping, showing balances, etc.
+  final bool? disableHapticFeedBack;
+
+  @override
+  State<AnimatedFlippingCard> createState() => _AnimatedFlippingCardState();
+}
+
+class _AnimatedFlippingCardState extends State<AnimatedFlippingCard>
+    with TickerProviderStateMixin {
+  late AnimationController _animationController;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: Durations.medium1,
+    );
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onHorizontalDragEnd: (details) {
+        if (!widget.disableHapticFeedBack!) {
+          HapticFeedback.mediumImpact();
+        }
+
+        if (_animationController.value == 0) {
+          _animationController.animateTo(1);
+        } else {
+          _animationController.animateTo(0);
+        }
+      },
+      child: AnimatedBuilder(
+        animation: _animationController,
+        builder: (_, __) => Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.001)
+            ..rotateY(
+              pi * _animationController.value,
+            ),
+          child: _animationController.value < 0.5
+              ? widget.frontSide
+              : widget.backSide,
         ),
       ),
     );

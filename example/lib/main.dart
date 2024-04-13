@@ -34,7 +34,7 @@ class MyHomePage extends StatelessWidget {
       body: const Center(
         child: CreditCardUi(
           cardHolderFullName: 'John Doe',
-          cardNumber: '4123456781234567',
+          cardNumber: '1234567812345678',
           validFrom: '01/23',
           validThru: '01/28',
           topLeftColor: Colors.blue,
@@ -43,6 +43,11 @@ class MyHomePage extends StatelessWidget {
           cardType: CardType.debit,
           cardProviderLogo: FlutterLogo(),
           cardProviderLogoPosition: CardProviderLogoPosition.right,
+          showBalance: true,
+          balance: 128.32434343,
+          autoHideBalance: true,
+          enableFlipping: true,
+          cvvNumber: '123',
         ),
       ),
     );
