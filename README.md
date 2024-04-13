@@ -86,7 +86,7 @@ This will create a credit card user interface with the cardholder's name, card n
 | `balance`             | `bool`                     | The balance amount. By default, this value is 0.                                                               |
 | `showBalance`             | `bool`                     | A boolean flag indicating whether to show the balance. By default, this value is `false`.                                                               |
 | `enableFlipping`             | `bool`                     | A boolean flag indicating whether card flipping is enabled. By default, this value is `false`.                                                               |
-| `autoHideBalance`             | `bool`                     | A boolean flag indicating to enable the auto hiding balance feature. In this case, the placeholder will be shown insteade of the balance. By default it is `false`.
+| `autoHideBalance`             | `bool`                     | A boolean flag indicating to enable the auto hiding balance feature. In this case, the placeholder will be shown instead of the balance. By default it is `false`.
 | `cvvNumber`             | `bool`                     | CVV number of the card, use \*\*\* if you think this is sensitive, by default it will show \*\*\*.                                                               |
 | `disableHapticFeedBack`             | `bool`                     | A boolean flag to disable the haptic feedback. Example — card flipping or tapping on placeholder to see balance
 
