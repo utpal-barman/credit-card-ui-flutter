@@ -1,4 +1,4 @@
-name: Actions on Pull request and push to develop
+name: PR validation
 
 on:
   push:
