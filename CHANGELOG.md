@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] 🛠️
+
+### Hot fixes
+
+- Fixed asset path warning
+
 ## [1.2.0] 🚀
 
 ### Features
