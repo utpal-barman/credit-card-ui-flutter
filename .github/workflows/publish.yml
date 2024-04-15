@@ -24,6 +24,9 @@ jobs:
           cache: true
           cache-key: flutter-:os:-:channel:-:version:-:arch:-:hash:-${{ hashFiles('**/pubspec.lock') }}
 
+      - name: 🎯 Setup Dart
+        uses: dart-lang/setup-dart@v1
+
       - name: 📦 Install Dependencies
         run: dart pub get
 
