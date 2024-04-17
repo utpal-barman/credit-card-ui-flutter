@@ -29,7 +29,7 @@ Add `u_credit_card` to your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  u_credit_card: ^1.2.2
+  u_credit_card: ^1.3.0
 ```
 
 Install it:
@@ -89,6 +89,7 @@ This will create a credit card user interface with the cardholder's name, card n
 | `autoHideBalance`             | `bool`                     | A boolean flag indicating to enable the auto hiding balance feature. In this case, the placeholder will be shown instead of the balance. By default it is `false`.
 | `cvvNumber`             | `bool`                     | CVV number of the card, use \*\*\* if you think this is sensitive, by default it will show \*\*\*.                                                               |
 | `disableHapticFeedBack`             | `bool`                     | A boolean flag to disable the haptic feedback. Example — card flipping or tapping on placeholder to see balance
+| `width`             | `double`                     | A double value to set the width of the card, maximum value is 300.
 
 
 
@@ -145,17 +146,16 @@ This will create a credit card user interface with a red-to-purple gradient.
 <img width="432" alt="u_credit_card_gradient" src="https://user-images.githubusercontent.com/16848599/232333158-e0a3f488-cb36-4142-91a7-12d7d9546fca.png">
 
 
-#### Scaling
+#### Setting the card width
 
-If you want to scale the card, use `scale:` property.
+If you want to set the width of the card, use `width:` property.
+Better NOT wrap with `SizedBox(width: ..., child: CreditCardUi(....))`, instead use `width:` right from the `CreditCardUi()`
 
-If you set less than 1, the card size will be reduced,
-if you set greater than 1, the card size will be increased.
 
 
 ``` dart
 CreditCardUi(
-  scale: 0.6, // 👈 this will make smaller than the regular size
+  width: 300, // 👈 this will set the width of the card
   cardHolderFullName: 'John Doe',
   cardNumber: '1234567812345678',
   validThru: '10/24',
@@ -164,6 +164,7 @@ CreditCardUi(
 ),
 ```
 
+Note: Setting up any value more than 300 is not considered, maximum width can be 300 only.
 
 #### Additional Customizations
 To further customize the card, you can add a background image by using the `backgroundDecorationImage` property. Additionally, you can include a logo for the card provider using the `cardProviderLogo` property. This logo can be positioned on either the left or the right side of the card using the `cardProviderLogoPosition` property.

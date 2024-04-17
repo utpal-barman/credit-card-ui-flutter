@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -71,34 +70,24 @@ class CreditCardTopLogo extends StatelessWidget {
           ? TextDirection.rtl
           : TextDirection.ltr,
       children: [
-        if (showBalance!)
-          _CreditCardBalanceView(
-            currencySymbol: currencySymbol,
-            balance: balance,
-            autoHideBalance: autoHideBalance,
-            disableHapticFeedBack: disableHapticFeedback,
-          )
-        else
-          Text(
-            getCardTitle(cardType),
-            style: const TextStyle(
-              color: Colors.white70,
-              fontSize: 8,
-              letterSpacing: 1.5,
-            ),
-          ),
-        if (enableFlipping!)
-          Padding(
-            padding: const EdgeInsets.only(right: 72),
-            child: Transform.rotate(
-              angle: -pi / 4,
-              child: const Icon(
-                Icons.screen_rotation_rounded,
-                color: Colors.white70,
-                size: 16,
-              ),
-            ),
-          ),
+        AnimatedSwitcher(
+          duration: Durations.medium1,
+          child: (showBalance!)
+              ? _CreditCardBalanceView(
+                  currencySymbol: currencySymbol,
+                  balance: balance,
+                  autoHideBalance: autoHideBalance,
+                  disableHapticFeedBack: disableHapticFeedback,
+                )
+              : Text(
+                  getCardTitle(cardType),
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 8,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+        ),
         cardProviderLogo ?? const SizedBox.shrink(),
       ],
     );
@@ -124,8 +113,13 @@ class _CreditCardBalanceView extends StatefulWidget {
 
 class _CreditCardBalanceViewState extends State<_CreditCardBalanceView> {
   bool showBalance = false;
+  Timer? _timer;
 
   Future<void> _onBalanceViewClicked() async {
+    if (_timer != null) {
+      return;
+    }
+
     if (!widget.disableHapticFeedBack!) {
       await HapticFeedback.lightImpact();
     }
@@ -133,58 +127,59 @@ class _CreditCardBalanceViewState extends State<_CreditCardBalanceView> {
       showBalance = !showBalance;
     });
 
-    await Future<void>.delayed(const Duration(seconds: 2));
-    if (mounted) {
-      setState(() {
-        showBalance = !showBalance;
-      });
-    }
+    _timer = Timer(const Duration(seconds: 2), () {
+      if (mounted) {
+        setState(() {
+          showBalance = !showBalance;
+        });
+      }
+
+      _timer = null;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedSize(
-      curve: Curves.easeInCirc,
-      duration: Durations.short3,
-      child: AnimatedSwitcher(
-        duration: Durations.short3,
-        child: showBalance || !widget.autoHideBalance!
-            ? Padding(
+    return AnimatedSwitcher(
+      switchInCurve: Curves.easeInCubic,
+      switchOutCurve: Curves.easeOutCubic,
+      duration: Durations.medium3,
+      child: showBalance || !widget.autoHideBalance!
+          ? SizedBox(
+              width: 100,
+              child: Text(
                 key: const ValueKey('Balance'),
-                padding: const EdgeInsets.only(right: 50),
-                child: Text(
-                  // ignore: lines_longer_than_80_chars
-                  '${widget.currencySymbol}${widget.balance?.toStringAsFixed(2)}',
-                  textAlign: TextAlign.left,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                // ignore: lines_longer_than_80_chars
+                '${widget.currencySymbol}${widget.balance?.toStringAsFixed(2)}',
+                //   textAlign: TextAlign.left,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
                 ),
-              )
-            : GestureDetector(
-                onTap: _onBalanceViewClicked,
-                child: Container(
-                  key: const ValueKey('TapToSee'),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.88),
-                    borderRadius: BorderRadius.circular(50),
-                  ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: Text(
-                      'TAP TO SEE BALANCE',
-                      style: TextStyle(
-                        color: Colors.black54,
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                      ),
+              ),
+            )
+          : GestureDetector(
+              key: const ValueKey('TapToSee'),
+              onTap: _onBalanceViewClicked,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.88),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                child: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  child: Text(
+                    'TAP TO SEE BALANCE',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 8,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-      ),
+            ),
     );
   }
 }
