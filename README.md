@@ -243,7 +243,7 @@ CreditCardUi(
 ),
 ```
 
-<img src="https://github.com/utpal-barman/u-credit-card-flutter/assets/16848599/2dcf106f-50d4-4089-b234-ff5529b3e946" width="432" />
+<img src="https://github.com/utpal-barman/u-credit-card-flutter/assets/16848599/350654f2-30c1-464b-93f2-7ed721f07792" width="432" />
 
 
 ধন্যবাদ
