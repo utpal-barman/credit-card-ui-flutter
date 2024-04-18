@@ -33,6 +33,7 @@ class MyHomePage extends StatelessWidget {
       appBar: AppBar(title: const Text("u_credit_card")),
       body: const Center(
         child: CreditCardUi(
+          width: 300,
           cardHolderFullName: 'John Doe',
           cardNumber: '1234567812345678',
           validFrom: '01/23',

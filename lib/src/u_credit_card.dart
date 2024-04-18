@@ -1,5 +1,8 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:u_credit_card/src/constants/ui_constants.dart';
@@ -70,7 +73,11 @@ class CreditCardUi extends StatelessWidget {
     this.topLeftColor = Colors.purple,
     this.bottomRightColor,
     this.doesSupportNfc = true,
+    @Deprecated(
+      '[scale] is deprecated, use [width] instead, will be removed soon',
+    )
     this.scale = 1.0,
+    this.width,
     this.placeNfcIconAtTheEnd = false,
     this.cardType = CardType.credit,
     this.creditCardType,
@@ -149,7 +156,16 @@ class CreditCardUi extends StatelessWidget {
   /// set the value less than 1, else set greater than 1.
   ///
   /// By default the value is 1.0.
+  @Deprecated(
+    '[scale] is deprecated, use [width] instead, will be removed soon',
+  )
   final double scale;
+
+  /// Defines Card max width.
+  ///
+  /// By default [width] is 300, if any value is assigned greater than 300,
+  /// It will consider it as 300.
+  final double? width;
 
   /// Provide the type of the card - credit or debit.
   /// By default, it's `CardType.credit`
@@ -244,97 +260,94 @@ class CreditCardUi extends StatelessWidget {
       );
     }
 
-    final frontSide = Transform.scale(
+    final frontSide = SizedBox(
       key: const ValueKey('FrontSide'),
-      scale: scale,
-      child: SizedBox(
-        width: 300,
-        child: AspectRatio(
-          aspectRatio: 1.5789,
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  topLeftColor,
-                  conditionalBottomRightColor,
-                ],
-              ),
-              image: backgroundDecorationImage,
-            ),
-            child: Stack(
-              children: [
-                Positioned(
-                  left: 16,
-                  top: 16,
-                  child: SizedBox(
-                    height: 32,
-                    width: 268,
-                    child: CreditCardTopLogo(
-                      enableFlipping: enableFlipping,
-                      currencySymbol: currencySymbol,
-                      autoHideBalance: autoHideBalance,
-                      balance: balance,
-                      showBalance: showBalance,
-                      cardType: cardType,
-                      cardProviderLogo: cardProviderLogo,
-                      cardProviderLogoPosition: cardProviderLogoPosition,
-                    ),
-                  ),
-                ),
-                Positioned(
-                  left: 20,
-                  top: 64,
-                  child: CreditCardChipNfcView(
-                    doesSupportNfc: doesSupportNfc,
-                    placeNfcIconAtTheEnd: placeNfcIconAtTheEnd,
-                  ),
-                ),
-                Positioned(
-                  top: 138,
-                  left: 20,
-                  child: CreditCardValidityView(
-                    validFromMasked: validFromMasked,
-                    validThruMasked: validThruMasked,
-                    showValidFrom: showValidFrom,
-                    showValidThru: showValidThru,
-                  ),
-                ),
-                Positioned(
-                  right: 8,
-                  bottom: 8,
-                  child: SizedBox(
-                    height: 36,
-                    width: 84,
-                    child: AnimatedSwitcher(
-                      duration: UiConstants.animationDuration,
-                      child: Container(
-                        key: ValueKey(cardNumberMasked),
-                        child: cardLogoWidget,
-                      ),
-                    ),
-                  ),
-                ),
-                Positioned(
-                  top: 160,
-                  left: 20,
-                  child: CreditCardHolderNameView(
-                    cardHolderFullName: cardHolderFullName,
-                  ),
-                ),
-                Positioned(
-                  top: 108,
-                  left: 20,
-                  child: CreditCardText(
-                    cardNumberMasked.length > 20
-                        ? cardNumberMasked.substring(0, 20)
-                        : cardNumberMasked,
-                  ),
-                ),
+      width: 300,
+      child: AspectRatio(
+        aspectRatio: 1.5789,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                topLeftColor,
+                conditionalBottomRightColor,
               ],
             ),
+            image: backgroundDecorationImage,
+          ),
+          child: Stack(
+            children: [
+              Positioned(
+                left: 16,
+                top: 16,
+                child: SizedBox(
+                  height: 32,
+                  width: 268,
+                  child: CreditCardTopLogo(
+                    enableFlipping: enableFlipping,
+                    currencySymbol: currencySymbol,
+                    autoHideBalance: autoHideBalance,
+                    balance: balance,
+                    showBalance: showBalance,
+                    cardType: cardType,
+                    cardProviderLogo: cardProviderLogo,
+                    cardProviderLogoPosition: cardProviderLogoPosition,
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 20,
+                top: 64,
+                child: CreditCardChipNfcView(
+                  doesSupportNfc: doesSupportNfc,
+                  placeNfcIconAtTheEnd: placeNfcIconAtTheEnd,
+                ),
+              ),
+              Positioned(
+                top: 138,
+                left: 20,
+                child: CreditCardValidityView(
+                  validFromMasked: validFromMasked,
+                  validThruMasked: validThruMasked,
+                  showValidFrom: showValidFrom,
+                  showValidThru: showValidThru,
+                ),
+              ),
+              Positioned(
+                right: 8,
+                bottom: 8,
+                child: SizedBox(
+                  height: 36,
+                  width: 84,
+                  child: AnimatedSwitcher(
+                    duration: UiConstants.animationDuration,
+                    child: Container(
+                      key: ValueKey(cardNumberMasked),
+                      child: cardLogoWidget,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                top: 160,
+                left: 20,
+                child: CreditCardHolderNameView(
+                  cardHolderFullName: cardHolderFullName,
+                ),
+              ),
+              Positioned(
+                top: 108,
+                left: 20,
+                child: CreditCardText(
+                  cardNumberMasked.length > 20
+                      ? cardNumberMasked.substring(0, 20)
+                      : cardNumberMasked,
+                ),
+              ),
+            ],
           ),
         ),
       ),
@@ -344,79 +357,83 @@ class CreditCardUi extends StatelessWidget {
       final backSide = Transform.flip(
         key: const ValueKey('BackSide'),
         flipX: true,
-        child: Transform.scale(
-          scale: scale,
-          child: SizedBox(
-            width: 300,
-            child: AspectRatio(
-              aspectRatio: 1.5789,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      topLeftColor,
-                      conditionalBottomRightColor,
-                    ],
-                  ),
-                  image: backgroundDecorationImage,
+        child: SizedBox(
+          width: 300,
+          child: AspectRatio(
+            aspectRatio: 1.5789,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    topLeftColor,
+                    conditionalBottomRightColor,
+                  ],
                 ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 24,
-                      child: Container(
-                        height: 50,
-                        width: 300,
-                        color: Colors.black,
-                      ),
+                image: backgroundDecorationImage,
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 24,
+                    child: Container(
+                      height: 50,
+                      width: 300,
+                      color: Colors.black,
                     ),
-                    Positioned(
-                      left: 0,
-                      top: 84,
-                      child: Container(
-                        height: 36,
-                        width: 200,
-                        color: const Color(0xFFB3B3B3),
-                        child: Center(
-                          child: SizedBox(
-                            width: 200,
-                            child: Padding(
-                              padding: const EdgeInsets.all(8),
-                              child: Text(
-                                cvvNumber ?? '',
-                                textAlign: TextAlign.end,
-                              ),
+                  ),
+                  Positioned(
+                    left: 0,
+                    top: 84,
+                    child: Container(
+                      height: 36,
+                      width: 200,
+                      color: const Color(0xFFB3B3B3),
+                      child: Center(
+                        child: SizedBox(
+                          width: 200,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              cvvNumber ?? '',
+                              textAlign: TextAlign.end,
                             ),
                           ),
                         ),
                       ),
                     ),
-                    Positioned(
-                      left: 8,
-                      bottom: 8,
-                      child: SizedBox(
-                        height: 20,
-                        width: 44,
-                        child: Container(
-                          key: const ValueKey('CardLogoWidget'),
-                          child: cardLogoWidget,
-                        ),
+                  ),
+                  Positioned(
+                    left: 8,
+                    bottom: 8,
+                    child: SizedBox(
+                      height: 20,
+                      width: 44,
+                      child: Container(
+                        key: const ValueKey('CardLogoWidget'),
+                        child: cardLogoWidget,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
         ),
       );
 
-      return AnimatedFlippingCard(
-        frontSide: frontSide,
-        backSide: backSide,
+      return Transform.scale(
+        scale: width == null || width! < 0
+            ? 0
+            : width! <= 300
+                ? width! / 300
+                : 1.0,
+        child: AnimatedFlippingCard(
+          frontSide: frontSide,
+          backSide: backSide,
+        ),
       );
     }
 
@@ -458,7 +475,7 @@ class _AnimatedFlippingCardState extends State<AnimatedFlippingCard>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: Durations.medium1,
+      duration: Durations.medium3,
     );
   }
 
@@ -476,6 +493,12 @@ class _AnimatedFlippingCardState extends State<AnimatedFlippingCard>
           HapticFeedback.mediumImpact();
         }
 
+        final swippedLeft = details.velocity.pixelsPerSecond.dx < 1;
+
+        if (swippedLeft) {
+          // Do something
+        }
+
         if (_animationController.value == 0) {
           _animationController.animateTo(1);
         } else {
@@ -484,17 +507,28 @@ class _AnimatedFlippingCardState extends State<AnimatedFlippingCard>
       },
       child: AnimatedBuilder(
         animation: _animationController,
-        builder: (_, __) => Transform(
-          alignment: Alignment.center,
-          transform: Matrix4.identity()
+        builder: (_, __) {
+          final value = _animationController.value;
+          final scaleValue = value > 0.5 ? value : 1 - value;
+          final clampedScale = clampDouble(scaleValue, 0.8, 1);
+          final rotationValue = pi * value;
+
+          final transformationMatrix = Matrix4.identity()
             ..setEntry(3, 2, 0.001)
-            ..rotateY(
-              pi * _animationController.value,
+            ..scale(clampedScale)
+            ..rotateY(rotationValue);
+
+          return Transform(
+            alignment: Alignment.center,
+            transform: transformationMatrix,
+            child: AnimatedSwitcher(
+              duration: Durations.short2,
+              child: _animationController.value < 0.5
+                  ? widget.frontSide
+                  : widget.backSide,
             ),
-          child: _animationController.value < 0.5
-              ? widget.frontSide
-              : widget.backSide,
-        ),
+          );
+        },
       ),
     );
   }

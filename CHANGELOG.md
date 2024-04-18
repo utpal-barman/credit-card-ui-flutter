@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] 🛠️
+
+### Deprecated parameters
+
+- `scale` is deprecated in 1.3.0, will be removed on later version, use width parameter instead
+
+### Feature
+
+- Added a zoom out effect animation while card flipping.
+
 ## [1.2.2] 🛠️
 
 ### Hot fixes
