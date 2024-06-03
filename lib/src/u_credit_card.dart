@@ -426,7 +426,7 @@ class CreditCardUi extends StatelessWidget {
 
       return Transform.scale(
         scale: width == null || width! < 0
-            ? 0
+            ? 1
             : width! <= 300
                 ? width! / 300
                 : 1.0,
