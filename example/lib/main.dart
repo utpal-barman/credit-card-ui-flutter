@@ -1,5 +1,5 @@
-import 'package:u_credit_card/u_credit_card.dart';
 import 'package:flutter/material.dart';
+import 'package:u_credit_card/u_credit_card.dart';
 
 void main() {
   runApp(const MyApp());
@@ -32,23 +32,19 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("u_credit_card")),
       body: const Center(
-        child: CreditCardUi(
-          width: 300,
-          cardHolderFullName: 'John Doe',
-          cardNumber: '1234567812345678',
-          validFrom: '01/23',
-          validThru: '01/28',
-          topLeftColor: Colors.blue,
-          doesSupportNfc: true,
-          placeNfcIconAtTheEnd: true,
-          cardType: CardType.debit,
-          cardProviderLogo: FlutterLogo(),
-          cardProviderLogoPosition: CardProviderLogoPosition.right,
-          showBalance: true,
-          balance: 128.32434343,
-          autoHideBalance: true,
-          enableFlipping: true,
-          cvvNumber: '123',
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30.0),
+          child: CreditCardUi(
+            cardHolderFullName: 'John Doe',
+            cardNumber: '1234567812345678',
+            validThru: '01/28',
+            cvvNumber: '123',
+            isFloating: true,
+            backgroundDecorationImage: DecorationImage(
+              image: AssetImage("assets/chip.png"),
+              fit: BoxFit.cover,
+            ),
+          ),
         ),
       ),
     );

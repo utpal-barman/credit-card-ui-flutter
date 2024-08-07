@@ -25,7 +25,7 @@ class CreditCardChipNfcView extends StatelessWidget {
         children: [
           ...[
             const SizedBox(width: 12),
-            const SizedBox(
+            SizedBox(
               height: 26,
               child: CreditCardAssetImage(
                 assetPath: Assets.chip,
@@ -37,7 +37,7 @@ class CreditCardChipNfcView extends StatelessWidget {
             const SizedBox.shrink()
           else ...[
             const SizedBox(width: 12),
-            const SizedBox(
+            SizedBox(
               height: 18,
               width: 25,
               child: CreditCardAssetImage(

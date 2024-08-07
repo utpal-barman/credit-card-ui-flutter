@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:u_credit_card/src/constants/custom_assets.dart';
 import 'package:u_credit_card/src/constants/ui_constants.dart';
 import 'package:u_credit_card/src/ui/credit_card_chip_nfc_view.dart';
 import 'package:u_credit_card/src/ui/credit_card_holder_name_view.dart';
@@ -70,8 +71,8 @@ class CreditCardUi extends StatelessWidget {
     required this.cardNumber,
     required this.validThru,
     this.validFrom,
-    this.topLeftColor = Colors.purple,
-    this.bottomRightColor,
+    this.backgroundGradiantColor,
+    this.backgroundColor,
     this.doesSupportNfc = true,
     @Deprecated(
       '[scale] is deprecated, use [width] instead, will be removed soon',
@@ -94,6 +95,19 @@ class CreditCardUi extends StatelessWidget {
     this.enableFlipping = false,
     this.cvvNumber = '***',
     this.disableHapticFeedBack = false,
+    this.cardNumberTextStyle,
+    this.changeFontFamily = false,
+    this.cardHolderNameTextStyle,
+    this.validationValueTextStyle,
+    this.validationTitleTextStyle = const TextStyle(
+      color: Color.fromARGB(255, 200, 200, 200),
+      fontSize: 5,
+      height: 1.2,
+    ),
+    this.validThruText = 'Valid From',
+    this.validFromText = 'Valid Thru',
+    this.isFloating = false,
+    this.customAssets = const CustomAssets(),
   });
 
   /// Full Name of the Card Holder.
@@ -129,13 +143,10 @@ class CreditCardUi extends StatelessWidget {
   /// by default it's `Colors.purple`.
   ///
   /// Tip: Avoid light colors, because texts are now white.
-  final Color topLeftColor;
+  final Gradient? backgroundGradiantColor;
 
-  /// Bottom Left Color for the Gradient,
-  /// by default it's deeper version of `topLeftColor`.
-  ///
-  /// Tip: Avoid light colors, because texts are now white.
-  final Color? bottomRightColor;
+  /// Color for the card bg
+  final Color? backgroundColor;
 
   /// Shows a NFC icon to tell user if the card supports NFC feature.
   ///
@@ -203,7 +214,7 @@ class CreditCardUi extends StatelessWidget {
   final bool? showBalance;
 
   /// A boolean flag indicating whether card flipping is enabled.
-  final bool? enableFlipping;
+  final bool enableFlipping;
 
   /// A boolean flag indicating to enable the auto hiding balance feature.
   ///
@@ -214,9 +225,36 @@ class CreditCardUi extends StatelessWidget {
   /// by default it will show ***
   final String? cvvNumber;
 
+  ///
+  final String validFromText;
+
+  ///
+  final String validThruText;
+
   /// A boolean flag to disable the haptic feedback.
   /// Example — card flipping or tapping on placeholder to see balance
   final bool? disableHapticFeedBack;
+
+  /// Apply custom text style for card number
+  final TextStyle? cardNumberTextStyle;
+
+  /// Apply custom text style for card holder name
+  final TextStyle? cardHolderNameTextStyle;
+
+  /// Apply custom text style for card validation credentials
+  final TextStyle? validationValueTextStyle;
+
+  /// Apply custom text style for card validation credentials
+  final TextStyle validationTitleTextStyle;
+
+  /// Choose if custom font family from textStyle is preferred
+  final bool changeFontFamily;
+
+  ///
+  final bool isFloating;
+
+  /// Choose custom icons logos
+  final CustomAssets customAssets;
 
   @override
   Widget build(BuildContext context) {
@@ -234,193 +272,197 @@ class CreditCardUi extends StatelessWidget {
       validThru,
     );
 
-    final conditionalBottomRightColor = bottomRightColor ??
-        CreditCardHelper.getDarkerColor(
-          topLeftColor,
-        );
-
-    Widget cardLogoWidget;
-    final cardLogoString = CreditCardHelper.getCardLogoFromCardNumber(
+    var cardLogoWidget = CreditCardHelper.getCardLogoFromCardNumber(
       cardNumber: cardNumberMasked,
+      customAssets: customAssets,
     );
 
-    if (cardLogoString.isEmpty || creditCardType == CreditCardType.none) {
-      cardLogoWidget = const SizedBox.shrink();
-    } else if (creditCardType != null) {
-      cardLogoWidget = Image.asset(
-        CreditCardHelper.getCardLogoFromType(creditCardType: creditCardType!),
-        package: UiConstants.packageName,
-      );
-    } else {
-      cardLogoWidget = Image.asset(
-        CreditCardHelper.getCardLogoFromCardNumber(
-          cardNumber: cardNumberMasked,
-        ),
-        package: UiConstants.packageName,
+    if (creditCardType != null) {
+      cardLogoWidget = CreditCardHelper.getCardLogoFromCustomLogos(
+        creditCardType: creditCardType!,
+        customAssets: customAssets,
       );
     }
 
-    final frontSide = SizedBox(
-      key: const ValueKey('FrontSide'),
-      width: 300,
-      child: AspectRatio(
-        aspectRatio: 1.5789,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                topLeftColor,
-                conditionalBottomRightColor,
-              ],
-            ),
-            image: backgroundDecorationImage,
-          ),
-          child: Stack(
-            children: [
-              Positioned(
-                left: 16,
-                top: 16,
-                child: SizedBox(
-                  height: 32,
-                  width: 268,
-                  child: CreditCardTopLogo(
-                    enableFlipping: enableFlipping,
-                    currencySymbol: currencySymbol,
-                    autoHideBalance: autoHideBalance,
-                    balance: balance,
-                    showBalance: showBalance,
-                    cardType: cardType,
-                    cardProviderLogo: cardProviderLogo,
-                    cardProviderLogoPosition: cardProviderLogoPosition,
-                  ),
+    final frontSide = Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            key: const ValueKey('FrontSide'),
+            child: AspectRatio(
+              aspectRatio: 1.5789,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(15),
+                  boxShadow: isFloating
+                      ? [
+                          const BoxShadow(
+                            color: Color.fromRGBO(0, 0, 0, 0.3),
+                            spreadRadius: 1.5,
+                            offset: Offset(0, 4),
+                            blurRadius: 8,
+                          ),
+                        ]
+                      : [],
+                  gradient: backgroundGradiantColor,
+                  color: backgroundColor,
+                  image: backgroundDecorationImage,
                 ),
-              ),
-              Positioned(
-                left: 20,
-                top: 64,
-                child: CreditCardChipNfcView(
-                  doesSupportNfc: doesSupportNfc,
-                  placeNfcIconAtTheEnd: placeNfcIconAtTheEnd,
-                ),
-              ),
-              Positioned(
-                top: 138,
-                left: 20,
-                child: CreditCardValidityView(
-                  validFromMasked: validFromMasked,
-                  validThruMasked: validThruMasked,
-                  showValidFrom: showValidFrom,
-                  showValidThru: showValidThru,
-                ),
-              ),
-              Positioned(
-                right: 8,
-                bottom: 8,
-                child: SizedBox(
-                  height: 36,
-                  width: 84,
-                  child: AnimatedSwitcher(
-                    duration: UiConstants.animationDuration,
-                    child: Container(
-                      key: ValueKey(cardNumberMasked),
-                      child: cardLogoWidget,
+                child: Stack(
+                  children: [
+                    Positioned(
+                      left: 16,
+                      top: 16,
+                      child: SizedBox(
+                        height: 32,
+                        width: 268,
+                        child: CreditCardTopLogo(
+                          enableFlipping: enableFlipping,
+                          currencySymbol: currencySymbol,
+                          autoHideBalance: autoHideBalance,
+                          balance: balance,
+                          showBalance: showBalance,
+                          cardType: cardType,
+                          cardProviderLogo: cardProviderLogo,
+                          cardProviderLogoPosition: cardProviderLogoPosition,
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              Positioned(
-                top: 160,
-                left: 20,
-                child: CreditCardHolderNameView(
-                  cardHolderFullName: cardHolderFullName,
-                ),
-              ),
-              Positioned(
-                top: 108,
-                left: 20,
-                child: CreditCardText(
-                  cardNumberMasked.length > 20
-                      ? cardNumberMasked.substring(0, 20)
-                      : cardNumberMasked,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-
-    if (enableFlipping ?? false) {
-      final backSide = Transform.flip(
-        key: const ValueKey('BackSide'),
-        flipX: true,
-        child: SizedBox(
-          width: 300,
-          child: AspectRatio(
-            aspectRatio: 1.5789,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    topLeftColor,
-                    conditionalBottomRightColor,
-                  ],
-                ),
-                image: backgroundDecorationImage,
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 24,
-                    child: Container(
-                      height: 50,
-                      width: 300,
-                      color: Colors.black,
+                    Positioned(
+                      left: 20,
+                      top: 64,
+                      child: CreditCardChipNfcView(
+                        doesSupportNfc: doesSupportNfc,
+                        placeNfcIconAtTheEnd: placeNfcIconAtTheEnd,
+                      ),
                     ),
-                  ),
-                  Positioned(
-                    left: 0,
-                    top: 84,
-                    child: Container(
-                      height: 36,
-                      width: 200,
-                      color: const Color(0xFFB3B3B3),
-                      child: Center(
-                        child: SizedBox(
-                          width: 200,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Text(
-                              cvvNumber ?? '',
-                              textAlign: TextAlign.end,
-                            ),
+                    Positioned(
+                      top: 138,
+                      left: 20,
+                      right: 20,
+                      child: CreditCardValidityView(
+                        validFromMasked: validFromMasked,
+                        validThruMasked: validThruMasked,
+                        showValidFrom: showValidFrom,
+                        showValidThru: showValidThru,
+                        textStyle: validationValueTextStyle,
+                        validFromText: validFromText,
+                        validThruText: validThruText,
+                        changeFontFamily: changeFontFamily,
+                        validationTextStyle: validationTitleTextStyle,
+                      ),
+                    ),
+                    Positioned(
+                      right: 8,
+                      bottom: 8,
+                      child: SizedBox(
+                        height: 36,
+                        width: 84,
+                        child: AnimatedSwitcher(
+                          duration: UiConstants.animationDuration,
+                          child: Container(
+                            key: ValueKey(cardNumberMasked),
+                            child: cardLogoWidget,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    left: 8,
-                    bottom: 8,
-                    child: SizedBox(
-                      height: 20,
-                      width: 44,
-                      child: Container(
-                        key: const ValueKey('CardLogoWidget'),
-                        child: cardLogoWidget,
+                    Positioned(
+                      top: 160,
+                      left: 20,
+                      child: CreditCardHolderNameView(
+                        cardHolderFullName: cardHolderFullName,
+                        textStyle: cardHolderNameTextStyle,
+                        changeFontFamily: changeFontFamily,
                       ),
                     ),
-                  ),
-                ],
+                    Positioned(
+                      top: 108,
+                      left: 20,
+                      child: CreditCardText(
+                        cardNumberMasked.length > 20
+                            ? cardNumberMasked.substring(0, 20)
+                            : cardNumberMasked,
+                        textStyle: cardNumberTextStyle,
+                        changeFontFamily: changeFontFamily,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
+        ),
+      ],
+    );
+
+    if (enableFlipping) {
+      final backSide = Transform.flip(
+        key: const ValueKey('BackSide'),
+        flipX: true,
+        child: Row(
+          children: [
+            Expanded(
+              child: SizedBox(
+                child: AspectRatio(
+                  aspectRatio: 1.5789,
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      gradient: backgroundGradiantColor,
+                      color: backgroundColor,
+                      image: backgroundDecorationImage,
+                    ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          top: 24,
+                          child: Container(
+                            height: 50,
+                            width: 300,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Positioned(
+                          left: 0,
+                          top: 84,
+                          child: Container(
+                            height: 36,
+                            width: 200,
+                            color: const Color(0xFFB3B3B3),
+                            child: Center(
+                              child: SizedBox(
+                                width: 200,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8),
+                                  child: Text(
+                                    cvvNumber ?? '',
+                                    textAlign: TextAlign.end,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          left: 8,
+                          bottom: 8,
+                          child: SizedBox(
+                            height: 20,
+                            width: 44,
+                            child: Container(
+                              key: const ValueKey('CardLogoWidget'),
+                              child: cardLogoWidget,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       );
 
@@ -493,9 +535,9 @@ class _AnimatedFlippingCardState extends State<AnimatedFlippingCard>
           HapticFeedback.mediumImpact();
         }
 
-        final swippedLeft = details.velocity.pixelsPerSecond.dx < 1;
+        final swipedLeft = details.velocity.pixelsPerSecond.dx < 1;
 
-        if (swippedLeft) {
+        if (swipedLeft) {
           // Do something
         }
 

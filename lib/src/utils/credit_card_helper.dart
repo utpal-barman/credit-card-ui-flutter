@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:u_credit_card/src/constants/assets.dart';
+import 'package:u_credit_card/src/constants/custom_assets.dart';
+import 'package:u_credit_card/src/constants/ui_constants.dart';
 import 'package:u_credit_card/src/utils/utils.dart';
 import 'package:u_credit_card/u_credit_card.dart';
 
@@ -74,23 +76,18 @@ class CreditCardHelper {
   }
 
   /// Get Card Logo String based on `cardNumber`
-  static String getCardLogoFromCardNumber({required String cardNumber}) {
+  static Widget getCardLogoFromCardNumber({
+    required String cardNumber,
+    required CustomAssets customAssets,
+  }) {
     final creditCard = CreditCard(cardNumber);
 
     final cardType = creditCard.cardType;
 
-    switch (cardType) {
-      case CreditCardType.visa:
-        return Assets.visaLogo;
-      case CreditCardType.mastercard:
-        return Assets.masterCardLogo;
-      case CreditCardType.amex:
-        return Assets.amexLogo;
-      case CreditCardType.discover:
-        return Assets.discoverLogo;
-      case CreditCardType.none:
-        return '';
-    }
+    return CreditCardHelper.getCardLogoFromCustomLogos(
+      creditCardType: cardType,
+      customAssets: customAssets,
+    );
   }
 
   /// Get Card Logo String based on [CreditCardType]
@@ -109,5 +106,47 @@ class CreditCardHelper {
       case CreditCardType.none:
         return '';
     }
+  }
+
+  /// Get Card Logo String based on [CreditCardType]
+  static Widget getCardLogoFromCustomLogos({
+    required CreditCardType creditCardType,
+    required CustomAssets customAssets,
+  }) {
+    final cardType = creditCardType;
+
+    switch (cardType) {
+      case CreditCardType.visa:
+        return CreditCardHelper.customLogo(
+          customAssets.visaLogo,
+          creditCardType,
+        );
+      case CreditCardType.mastercard:
+        return CreditCardHelper.customLogo(
+          customAssets.masterCardLogo,
+          creditCardType,
+        );
+      case CreditCardType.amex:
+        return CreditCardHelper.customLogo(
+          customAssets.amexLogo,
+          creditCardType,
+        );
+      case CreditCardType.discover:
+        return CreditCardHelper.customLogo(
+          customAssets.discoverLogo,
+          creditCardType,
+        );
+      case CreditCardType.none:
+        return const SizedBox.shrink();
+    }
+  }
+
+  /// Get custom logo if available or get default logo in case not available
+  static Widget customLogo(Widget? customLogo, CreditCardType creditCardType) {
+    return customLogo ??
+        Image.asset(
+          CreditCardHelper.getCardLogoFromType(creditCardType: creditCardType),
+          package: UiConstants.packageName,
+        );
   }
 }

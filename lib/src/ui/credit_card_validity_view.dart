@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:u_credit_card/src/constants/ui_constants.dart';
 import 'package:u_credit_card/src/ui/credit_card_text.dart';
 
 ///
@@ -7,8 +8,13 @@ class CreditCardValidityView extends StatelessWidget {
   const CreditCardValidityView({
     required this.validFromMasked,
     required this.validThruMasked,
+    required this.validFromText,
+    required this.validThruText,
+    required this.validationTextStyle,
     this.showValidFrom = true,
     this.showValidThru = true,
+    this.textStyle,
+    this.changeFontFamily = false,
     super.key,
   });
 
@@ -32,58 +38,78 @@ class CreditCardValidityView extends StatelessWidget {
   /// The default value is `true`.
   final bool showValidThru;
 
+  ///
+  final TextStyle? textStyle;
+
+  ///
+  final bool changeFontFamily;
+
+  ///
+  final String validFromText;
+
+  ///
+  final String validThruText;
+
+  ///
+  final TextStyle validationTextStyle;
+
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Visibility.maintain(
-          visible: showValidFrom,
-          child: Row(
-            children: [
-              const SizedBox(
-                width: 24,
-                child: Text(
-                  'VALID FROM',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 200, 200, 200),
-                    fontSize: 5,
-                    height: 1.2,
-                  ),
+        if (showValidFrom)
+          Expanded(
+            child: Row(
+              children: [
+                Text(
+                  validFromText.toUpperCase(),
+                  style: validationTextStyle,
                   textAlign: TextAlign.center,
                 ),
-              ),
-              if (validFromMasked == null)
-                const SizedBox(width: 38)
-              else
-                CreditCardText(
-                  validFromMasked!,
-                  letterSpacing: 2,
-                  fontSize: 9,
-                ),
-            ],
+                const SizedBox(width: 25),
+                if (validFromMasked != null)
+                  Expanded(
+                    flex: 3,
+                    child: CreditCardText(
+                      validFromMasked!,
+                      textStyle: textStyle ??
+                          const TextStyle(
+                            letterSpacing: 2,
+                            fontSize: 9,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            package: UiConstants.packageName,
+                          ),
+                      changeFontFamily: changeFontFamily,
+                    ),
+                  ),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(width: 24),
-        Visibility.maintain(
-          visible: showValidThru,
+        if (showValidFrom) const SizedBox(width: 24),
+        Expanded(
           child: Row(
             children: [
-              const SizedBox(
-                width: 24,
-                child: Text(
-                  'VALID THRU',
-                  style: TextStyle(
-                    color: Color.fromARGB(255, 200, 200, 200),
-                    fontSize: 5,
-                    height: 1.2,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+              Text(
+                validThruText.toUpperCase(),
+                style: validationTextStyle,
+                textAlign: TextAlign.center,
               ),
-              CreditCardText(
-                validThruMasked,
-                letterSpacing: 2,
-                fontSize: 9,
+              const SizedBox(width: 25),
+              Expanded(
+                flex: 3,
+                child: CreditCardText(
+                  validThruMasked,
+                  textStyle: textStyle ??
+                      const TextStyle(
+                        letterSpacing: 2,
+                        fontSize: 9,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        package: UiConstants.packageName,
+                      ),
+                  changeFontFamily: changeFontFamily,
+                ),
               ),
             ],
           ),

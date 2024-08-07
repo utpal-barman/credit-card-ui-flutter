@@ -7,35 +7,37 @@ class CreditCardText extends StatelessWidget {
   const CreditCardText(
     this.text, {
     super.key,
-    this.letterSpacing = 3.2,
-    this.fontSize = 16,
-    this.fontWeight = FontWeight.w700,
+    this.textStyle,
+    this.changeFontFamily = false,
   });
 
   ///
   final String text;
 
   ///
-  final double letterSpacing;
+  final TextStyle? textStyle;
 
   ///
-  final double fontSize;
-
-  ///
-  final FontWeight fontWeight;
+  final bool changeFontFamily;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: TextStyle(
-        color: Colors.white,
-        letterSpacing: letterSpacing,
-        fontSize: fontSize,
-        fontWeight: fontWeight,
-        fontFamily: UiConstants.fontFamily,
-        package: UiConstants.packageName,
-      ),
+      style: textStyle != null
+          ? changeFontFamily
+              ? textStyle
+              : textStyle?.copyWith(
+                  fontFamily: UiConstants.fontFamily,
+                )
+          : const TextStyle(
+              color: Colors.white,
+              letterSpacing: 3.2,
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              fontFamily: UiConstants.fontFamily,
+              package: UiConstants.packageName,
+            ),
       maxLines: 1,
       overflow: TextOverflow.clip,
     );
