@@ -7,22 +7,27 @@ import 'package:u_credit_card/u_credit_card.dart';
 class CreditCardHelper {
   CreditCardHelper._();
 
-  /// Masks Credit Card number with asterisks
-  static String maskCreditCardNumber(String cardNumber) {
+  /// Masks Credit Card number with asterisks.
+  static String maskAndFormatCreditCardNumber(
+    String cardNumber, {
+    bool shouldMaskCardNumber = true,
+  }) {
     final length = cardNumber.length;
-    var maskedNumber = '';
 
-    for (var i = 0; i < length; i++) {
-      if (i < 4 || (i >= 12)) {
-        // keep the first 4 digits and the last 4 digits visible
-        maskedNumber += cardNumber[i];
-      } else {
-        // mask the digits between 4 and the length-4 with asterisks
-        maskedNumber += '*';
+    if (shouldMaskCardNumber && length >= 12) {
+      var maskedNumber = '';
+      for (var i = 0; i < length; i++) {
+        if (i < 4 || (i >= 12)) {
+          // keep the first 4 digits and the last 4 digits visible
+          maskedNumber += cardNumber[i];
+        } else {
+          // mask the digits between 4 and the length-4 with asterisks
+          maskedNumber += '*';
+        }
       }
+      return groupDigits(maskedNumber);
     }
-
-    return groupDigits(maskedNumber);
+    return groupDigits(cardNumber);
   }
 
   /// Group the masked number in sets of 4 digits.
