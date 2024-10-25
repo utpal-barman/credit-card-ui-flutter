@@ -221,7 +221,8 @@ class CreditCardUi extends StatelessWidget {
 
   /// Determines whether to display the full card number to the user.
   /// Displaying the full card number is not recommended due to its sensitivity.
-  /// By default, this value is `true` and the middle digits are masked with asterisks.
+  /// By default, this value is `true` and the middle digits are masked with
+  /// asterisks.
   final bool shouldMaskCardNumber;
 
   @override
