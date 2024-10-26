@@ -94,6 +94,7 @@ class CreditCardUi extends StatelessWidget {
     this.enableFlipping = false,
     this.cvvNumber = '***',
     this.disableHapticFeedBack = false,
+    this.shouldMaskCardNumber = true,
   });
 
   /// Full Name of the Card Holder.
@@ -207,7 +208,7 @@ class CreditCardUi extends StatelessWidget {
 
   /// A boolean flag indicating to enable the auto hiding balance feature.
   ///
-  /// In this case, the placeholder will be shown insteade of the balance.
+  /// In this case, the placeholder will be shown instead of the balance.
   final bool? autoHideBalance;
 
   /// CVV number of the card, use *** if you think this is sensitive,
@@ -218,10 +219,17 @@ class CreditCardUi extends StatelessWidget {
   /// Example — card flipping or tapping on placeholder to see balance
   final bool? disableHapticFeedBack;
 
+  /// Determines whether to display the full card number to the user.
+  /// Displaying the full card number is not recommended due to its sensitivity.
+  /// By default, this value is `true` and the middle digits are masked with
+  /// asterisks.
+  final bool shouldMaskCardNumber;
+
   @override
   Widget build(BuildContext context) {
-    final cardNumberMasked = CreditCardHelper.maskCreditCardNumber(
+    final cardNumberFormated = CreditCardHelper.maskAndFormatCreditCardNumber(
       cardNumber.replaceAll(' ', '').replaceAll('-', ''),
+      shouldMaskCardNumber: shouldMaskCardNumber,
     );
 
     final validFromMasked = validFrom == null
@@ -241,7 +249,7 @@ class CreditCardUi extends StatelessWidget {
 
     Widget cardLogoWidget;
     final cardLogoString = CreditCardHelper.getCardLogoFromCardNumber(
-      cardNumber: cardNumberMasked,
+      cardNumber: cardNumberFormated,
     );
 
     if (cardLogoString.isEmpty || creditCardType == CreditCardType.none) {
@@ -254,7 +262,7 @@ class CreditCardUi extends StatelessWidget {
     } else {
       cardLogoWidget = Image.asset(
         CreditCardHelper.getCardLogoFromCardNumber(
-          cardNumber: cardNumberMasked,
+          cardNumber: cardNumberFormated,
         ),
         package: UiConstants.packageName,
       );
@@ -325,7 +333,7 @@ class CreditCardUi extends StatelessWidget {
                   child: AnimatedSwitcher(
                     duration: UiConstants.animationDuration,
                     child: Container(
-                      key: ValueKey(cardNumberMasked),
+                      key: ValueKey(cardNumberFormated),
                       child: cardLogoWidget,
                     ),
                   ),
@@ -342,9 +350,9 @@ class CreditCardUi extends StatelessWidget {
                 top: 108,
                 left: 20,
                 child: CreditCardText(
-                  cardNumberMasked.length > 20
-                      ? cardNumberMasked.substring(0, 20)
-                      : cardNumberMasked,
+                  cardNumberFormated.length > 20
+                      ? cardNumberFormated.substring(0, 20)
+                      : cardNumberFormated,
                 ),
               ),
             ],
@@ -493,9 +501,9 @@ class _AnimatedFlippingCardState extends State<AnimatedFlippingCard>
           HapticFeedback.mediumImpact();
         }
 
-        final swippedLeft = details.velocity.pixelsPerSecond.dx < 1;
+        final swipedLeft = details.velocity.pixelsPerSecond.dx < 1;
 
-        if (swippedLeft) {
+        if (swipedLeft) {
           // Do something
         }
 
