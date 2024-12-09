@@ -235,8 +235,8 @@ class CreditCardUi extends StatelessWidget {
     final validFromMasked = validFrom == null
         ? null
         : CreditCardHelper.maskValidity(
-            validFrom!,
-          );
+      validFrom!,
+    );
 
     final validThruMasked = CreditCardHelper.maskValidity(
       validThru,
@@ -252,7 +252,8 @@ class CreditCardUi extends StatelessWidget {
       cardNumber: cardNumberFormated,
     );
 
-    if (cardLogoString.isEmpty || creditCardType == CreditCardType.none) {
+    if ((cardLogoString.isEmpty && creditCardType == null) ||
+        creditCardType == CreditCardType.none) {
       cardLogoWidget = const SizedBox.shrink();
     } else if (creditCardType != null) {
       cardLogoWidget = Image.asset(
@@ -261,9 +262,7 @@ class CreditCardUi extends StatelessWidget {
       );
     } else {
       cardLogoWidget = Image.asset(
-        CreditCardHelper.getCardLogoFromCardNumber(
-          cardNumber: cardNumberFormated,
-        ),
+        cardLogoString,
         package: UiConstants.packageName,
       );
     }
@@ -436,8 +435,8 @@ class CreditCardUi extends StatelessWidget {
         scale: width == null || width! < 0
             ? 1
             : width! <= 300
-                ? width! / 300
-                : 1.0,
+            ? width! / 300
+            : 1.0,
         child: AnimatedFlippingCard(
           frontSide: frontSide,
           backSide: backSide,
